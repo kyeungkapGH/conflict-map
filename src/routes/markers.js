@@ -1,5 +1,6 @@
 const express = require('express');
 const pool = require('../db');
+const requireDeletePassword = require('../middleware/requireDeletePassword');
 
 const router = express.Router();
 
@@ -57,8 +58,8 @@ router.post('/update', async (req, res) => {
   }
 });
 
-// POST /api/markers/delete?id=... : 삭제
-router.post('/delete', async (req, res) => {
+// POST /api/markers/delete?id=... : 삭제 (비밀번호 필요)
+router.post('/delete', requireDeletePassword, async (req, res) => {
   const id = req.query.id || req.body.id;
   if (!id) return res.status(400).json({ error: '삭제할 ID가 없습니다.' });
 

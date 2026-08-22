@@ -350,8 +350,19 @@ async function saveLine() {
 async function deleteLine(id) {
     if (!confirm('이 라인을 삭제하시겠습니까?')) return;
 
+    const password = prompt('삭제 비밀번호를 입력하세요.');
+    if (password === null) return;
+
     try {
-        const res = await fetch(`${LINES_URL}/delete?id=${id}`, { method: 'POST' });
+        const res = await fetch(`${LINES_URL}/delete?id=${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+        });
+        if (res.status === 403) {
+            alert('비밀번호가 올바르지 않습니다.');
+            return;
+        }
         if (res.ok) await loadLines();
     } catch (err) {
         console.error('라인 삭제 실패:', err);
@@ -477,8 +488,19 @@ async function saveMarker() {
 async function deleteMarker(id) {
     if (!confirm('이 마커를 삭제하시겠습니까?')) return;
 
+    const password = prompt('삭제 비밀번호를 입력하세요.');
+    if (password === null) return;
+
     try {
-        const res = await fetch(`${MARKERS_URL}/delete?id=${id}`, { method: 'POST' });
+        const res = await fetch(`${MARKERS_URL}/delete?id=${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+        });
+        if (res.status === 403) {
+            alert('비밀번호가 올바르지 않습니다.');
+            return;
+        }
         if (res.ok) await loadMarkers();
     } catch (err) {
         console.error('마커 삭제 실패:', err);
