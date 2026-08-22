@@ -1,3 +1,21 @@
+-- 상황 데이터 (공습/사건 등 위치 정보)
+CREATE TABLE IF NOT EXISTS locations (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    dms_string VARCHAR(255),
+    lat DOUBLE PRECISION NOT NULL,
+    lon DOUBLE PRECISION NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    recorded_at TIMESTAMP,
+    category VARCHAR(50),
+    detail_info TEXT,
+    damage_info TEXT,
+    attacker VARCHAR(100),
+    distance_km DOUBLE PRECISION,
+    occurred_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    article_title TEXT
+);
+
 -- 지형지물 라인 (강, 휴전선, 도로 등)
 CREATE TABLE IF NOT EXISTS map_lines (
     id SERIAL PRIMARY KEY,
