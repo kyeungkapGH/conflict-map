@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <title>[공정처] 공습 지도 작성</title>
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/8.2.0/ol.min.css">
+    <link rel="stylesheet" href="./style.css?v=123">
+</head>
+
+<body>
+
+    <div id="sidebar">
+        <div class="controls">
+            <div class="form-header">
+                <h3 id="form-title">📍 상황 정보 등록</h3>
+                <button id="target-btn" onclick="showPopup()">📊 레바논 지도 만들기</button>
+                <a href="./admin.html" id="admin-link">🗂️ 전체 데이터 관리</a>
+            </div>
+
+            <a id="download-link" style="display:none;"></a>
+            <input type="hidden" id="edit-id">
+
+            <input type="text" id="name-input" placeholder="장소 이름 (필수)" list="location-names">
+            <datalist id="location-names"></datalist>
+            <input type="text" id="coords-input" placeholder="위도, 경도 (필수)">
+
+            <div class="datetime-group">
+                <input type="date" id="date-input">
+                <input type="time" id="time-input" value="00:00">
+            </div>
+
+            <!-- 공격 주체: 라디오 버튼 (백엔드 필드명 attacker 유지) -->
+            <div class="attacker-group">
+                <input type="radio" name="attacker-radio" id="atk-israel" value="이스라엘군" checked>
+                <label for="atk-israel">이스라엘군</label>
+                <input type="radio" name="attacker-radio" id="atk-hez" value="헤즈볼라">
+                <label for="atk-hez">헤즈볼라</label>
+            </div>
+            <!-- attacker-input: handleSave()가 읽는 hidden 필드, 라디오 선택값과 동기화 -->
+            <input type="hidden" id="attacker-input">
+
+            <textarea id="detail-input" placeholder=". 이스라엘군, 레바논 남서부 나바티에주 나쿠라 마을 소재 UNIFIL 본부에 무인기로 공습 감행…전력 기반시설 파손
+[ 레바논. NNA. 4. 11. 04:37(4. 11. 10:37) ]
+(지도 탑재 시 붙여넣기 / 미탑재 시 생략)"></textarea>
+
+            <!-- 피해 현황: DB 필드는 유지, UI에서만 숨김 -->
+            <textarea id="damage-input" placeholder="피해 현황 (선택)" style="display:none;"></textarea>
+
+            <button id="submit-btn" onclick="handleSave()">서버 DB에 저장</button>
+            <button id="cancel-btn" class="cancel-btn" onclick="resetForm()">수정 취소</button>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-header">
+                <span>📅 날짜 필터</span>
+                <span id="selected-date-display">오늘</span>
+            </div>
+            <input type="range" id="date-slider" min="0" max="7" value="0" step="1"
+                oninput="handleSliderChange(this.value)">
+            <div class="slider-labels">
+                <span>오늘</span>
+                <span>-7일</span>
+            </div>
+        </div>
+
+        <ul id="location-list"></ul>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>📊 복붙용 표 (자동 정렬 됨)</h3>
+                <div class="popup-buttons">
+                    <button onclick="copyTable()">표 복사</button>
+                    <button onclick="captureMap()">스크린샷</button>
+                </div>
+            </div>
+
+            <table id="popup-table">
+                <colgroup>
+                    <col style="width: 5%;"> <!-- 순서 -->
+                    <col style="width: 10%;"> <!-- 지명 -->
+                    <col style="width: 60%;"> <!-- 기사제목 -->
+                    <col style="width: 10%;"> <!-- 출처 -->
+                    <col style="width: 15%;"> <!-- 시간 -->
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>지명</th>
+                        <th>기사제목</th>
+                        <th>출처</th>
+                        <th>시간</th>
+                    </tr>
+                </thead>
+
+                <tbody id="popup-table-body"></tbody>
+            </table>
+
+            <button onclick="closePopup()" style="margin-top:10px; background-color: #dc3545;">닫기</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/8.2.0/dist/ol.min.js"></script>
+    <script src="./constants.js"></script>
+    <script src="./map-styles.js"></script>
+    <script src="./map-markers.js"></script>
+    <script src="./map-crud.js"></script>
+    <script src="./map-logic.js"></script>
+    <script src="./popup-table.js"></script>
+</body>
+
+</html>

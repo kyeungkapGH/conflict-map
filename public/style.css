@@ -1,0 +1,450 @@
+/* ===========================================
+   style.css
+   전술 지도 애플리케이션 공통 스타일
+   =========================================== */
+
+/* ─────────────────────────────────────────
+   1. 레이아웃 기반
+   ───────────────────────────────────────── */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+}
+
+#sidebar {
+    width: 380px;
+    height: 100vh;
+    background: #fff;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#map {
+    flex: 1;
+    height: 100vh;
+}
+
+/* ─────────────────────────────────────────
+   2. 입력 폼 영역
+   ───────────────────────────────────────── */
+
+.controls {
+    padding: 20px;
+    border-bottom: 2px solid #eee;
+    background: #fafafa;
+}
+
+.form-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+h3 {
+    margin: 0;
+    border-left: 4px solid #007bff;
+    padding-left: 10px;
+    font-size: 1.1em;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.datetime-group {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.datetime-group input {
+    margin-bottom: 0;
+}
+
+#detail-input {
+    height: 100px;
+    resize: vertical;
+}
+
+/* ─────────────────────────────────────────
+   3. 버튼
+   ───────────────────────────────────────── */
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#capture-btn {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    background: #28a745;
+}
+
+#target-btn {
+    width: auto;
+    padding: 8px 15px;
+    font-size: 0.85em;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+#target-btn:hover {
+    background: #218838;
+}
+
+#admin-link {
+    width: auto;
+    padding: 8px 15px;
+    font-size: 0.85em;
+    background: #6c757d;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+#admin-link:hover {
+    background: #545b62;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    display: none;
+    margin-top: 5px;
+}
+
+/* ─────────────────────────────────────────
+   4. 날짜 필터 슬라이더
+   ───────────────────────────────────────── */
+
+.filter-section {
+    padding: 15px;
+    background: #e9ecef;
+    border-bottom: 1px solid #ddd;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+#selected-date-display {
+    color: #007bff;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* ─────────────────────────────────────────
+   5. 상황 목록 리스트
+   ───────────────────────────────────────── */
+
+#location-list {
+    flex: 1;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+}
+
+.list-item:hover {
+    background: #f8f9fa;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.location-title {
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.location-title:hover {
+    background-color: #e8f0fe;
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.location-title:active {
+    background-color: #d2e3fc;
+}
+
+.item-details {
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 8px;
+}
+
+/* ─────────────────────────────────────────
+   6. 수정 / 삭제 버튼 그룹
+   ───────────────────────────────────────── */
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    width: auto;
+    border: none;
+    color: white;
+}
+
+.edit-btn   { background: #28a745; }
+.delete-btn { background: #ff4d4d; }
+
+/* ─────────────────────────────────────────
+   7. 공격 주체 라디오 버튼 그룹
+   ───────────────────────────────────────── */
+
+.attacker-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+}
+
+/* 기본 라디오 버튼 숨김 */
+.attacker-group input[type="radio"] {
+    display: none;
+}
+
+/* 라벨을 버튼 형태로 표시 */
+.attacker-group label {
+    flex: 1;
+    padding: 10px 5px;
+    text-align: center;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.attacker-group label:hover {
+    background: #e9ecef;
+}
+
+/* 이스라엘군 선택 시 */
+.attacker-group input[value="이스라엘군"]:checked + label {
+    background: #1a73e8;
+    color: white;
+    border-color: #1a73e8;
+    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
+}
+
+/* 헤즈볼라 선택 시 */
+.attacker-group input[value="헤즈볼라"]:checked + label {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+/* ─────────────────────────────────────────
+   8. 팝업창
+   ───────────────────────────────────────── */
+
+#popup {
+  position: absolute; /* fixed → absolute로 바꾸면 map div 내에서 위치 가능 */
+  bottom: 20px;          /* 지도 상단에서 여유 공간 */
+  right: 40px;
+  width: 600px;       /* 팝업 너비 */
+  max-height: 80vh;   /* 지도 높이 넘지 않게 */
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.popup-container {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 10px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  min-width: 600px;   /* 최소 너비 */
+  max-width: 1000px;  /* 최대 너비 */
+  min-height: 200px;  /* 최소 높이 */
+  max-height: 80vh;   /* 화면 높이 기준 최대 80% */
+  overflow-y: auto;   /* 내용이 넘치면 스크롤 */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.hidden {
+  display: none;
+}
+
+#popup-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: #fff;
+    color: #333;
+    table-layout: fixed;
+}
+
+#popup-table thead th {
+    background: #f5f7fa;
+    color: #333;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+#popup-table tbody tr {
+    border-bottom: 1px solid #eee;
+}
+
+#popup-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+#popup-table td {
+    padding: 8px 10px;
+    vertical-align: top;
+
+    white-space: normal;   /* 줄바꿈 허용 */
+    overflow: visible;     /* 잘림 방지 */
+    text-overflow: clip;   /* ... 제거 */
+}
+
+/* 컬럼 스타일 */
+td.col-name {
+    font-weight: 600;
+    color: #007bff;
+}
+
+td.col-title {
+    white-space: normal;
+    line-height: 1.3;
+}
+
+td.col-time {
+    color: #6c757d;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+/* 복사용 버튼 스타일 */
+/* 팝업 상단: 제목 + 버튼 */
+.popup-header {
+    display: flex;
+    justify-content: space-between; /* 제목 왼쪽, 버튼 오른쪽 */
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.popup-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* 버튼 그룹 */
+.popup-buttons {
+    display: flex;
+    gap: 10px; /* 버튼 사이 간격 */
+}
+
+.popup-buttons button {
+    padding: 8px 16px; /* 가로 길이 확보 */
+    min-width: 100px;  /* 버튼 최소 너비 */
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+
+/* 표 복사: 파란색 */
+.popup-buttons button:first-child {
+    background-color: #007bff;
+}
+
+.popup-buttons button:first-child:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* 스크린샷: 주황색 */
+.popup-buttons button:last-child {
+    background-color: #fd7e14;
+}
+
+.popup-buttons button:last-child:hover {
+    background-color: #e06b00;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
