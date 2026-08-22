@@ -88,67 +88,19 @@ const extractName = (text) => {
 // ─────────────────────────────────────────
 
 /**
- * 리타니 강 라인 스타일
- * @type {ol.style.Style}
+ * DB(map_lines)에서 불러온 지형지물 라인의 스타일을 생성한다.
+ *
+ * @param {string} color - CSS color (예: 'rgba(0, 100, 255, 0.6)')
+ * @returns {ol.style.Style}
  */
-const litaniStyle = new ol.style.Style({
+const lineStyle = (color) => new ol.style.Style({
     stroke: new ol.style.Stroke({
-        color: 'rgba(0, 100, 255, 0.6)',
+        color,
         width: 5,
         lineCap: 'round',
         lineJoin: 'round',
     }),
 });
-
-/**
- * 옐로우 라인 스타일
- * @type {ol.style.Style}
- */
-const yellowLineStyle = new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: 'rgba(247, 181, 0, 0.6)',
-        width: 5,
-        lineCap: 'round',
-        lineJoin: 'round',
-    }),
-});
-
-/**
- * 블루 라인 스타일
- * @type {ol.style.Style}
- */
-const blueLineStyle = new ol.style.Style({
-    stroke: new ol.style.Stroke({
-        color: 'rgba(0, 0, 255, 0.6)',
-        width: 5,
-        lineCap: 'round',
-        lineJoin: 'round',
-    }),
-});
-
-/**
- * 51번 국도 라인 스타일 (외곽선 + 내부 점선 이중 레이어)
- * @type {ol.style.Style[]}
- */
-const route51Style = [
-    // 외곽 테두리
-    new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#333',
-            width: 6,
-            lineCap: 'round',
-        }),
-    }),
-    // 내부 흰색 점선
-    new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#fff',
-            width: 2,
-            lineDash: [10, 10],
-            lineCap: 'round',
-        }),
-    }),
-];
 
 // ─────────────────────────────────────────
 // 3. 마커 스타일 팩토리

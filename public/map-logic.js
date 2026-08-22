@@ -15,16 +15,41 @@ let vectorSource;
 /** @type {Object[]} 서버에서 로드한 전체 상황 데이터 캐시 */
 let allData = [];
 
+/** @type {Object[]} 서버에서 로드한 지형지물 라인 캐시 (map_lines) */
+let mapLines = [];
+
+/** @type {Object[]} 서버에서 로드한 점령지 마커 캐시 (map_markers) */
+let mapMarkers = [];
+
 // ─────────────────────────────────────────
 // 1. 초기화
 // ─────────────────────────────────────────
 
-window.onload = function () {
+window.onload = async function () {
     _initDateInput();
     _initMap();
-    loadFromServer();
+    await _loadMapFeatures();
+    await loadFromServer();
     _initNameAutocomplete();
 };
+
+/**
+ * 지형지물 라인/마커(map_lines, map_markers)를 로드한다.
+ * 날짜 필터와 무관하게 고정된 지형지물이라 최초 1회만 불러온다.
+ * @private
+ */
+async function _loadMapFeatures() {
+    try {
+        const [linesRes, markersRes] = await Promise.all([
+            fetch('./api/lines'),
+            fetch('./api/markers'),
+        ]);
+        mapLines = await linesRes.json();
+        mapMarkers = await markersRes.json();
+    } catch (err) {
+        console.error('지형지물 데이터 로드 실패:', err);
+    }
+}
 
 /**
  * 날짜 입력창이 있는 경우 오늘 날짜로 초기화한다. (index.html 전용)

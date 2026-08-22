@@ -23,11 +23,51 @@ body {
     font-weight: bold;
 }
 
+.tab-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #555;
+    padding: 10px 16px;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+}
+
+.tab-btn.active {
+    background: #2c3e50;
+    color: white;
+}
+
+.tab-panel.hidden {
+    display: none;
+}
+
+.color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
 .toolbar {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
+}
+
+.toolbar button {
+    width: auto;
+    background: #1a73e8;
+    color: white;
 }
 
 #search-input {

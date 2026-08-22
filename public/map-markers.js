@@ -8,8 +8,6 @@
 // 1. 기본 마커 추가
 // ─────────────────────────────────────────
 
-let analyzedLocations = new Set();
-
 /**
  * vectorSource에 포인트 마커를 추가한다.
  *
@@ -25,98 +23,39 @@ function addMarker(lonLat, style) {
 }
 
 // ─────────────────────────────────────────
-// 2. 지형지물 레이어
+// 2. 지형지물 라인 (DB: map_lines)
 // ─────────────────────────────────────────
 
-/** 리타니 강 라인 및 이름 라벨을 지도에 추가한다. */
-function addRiverLayer() {
-    // 강 경로 라인
-    const lineCoords = LITANI_RIVER_COORDS.map(([lat, lon]) => ol.proj.fromLonLat([lon, lat]));
-    const riverFeature = new ol.Feature({ geometry: new ol.geom.LineString(lineCoords) });
-    riverFeature.setStyle(litaniStyle);
-    vectorSource.addFeature(riverFeature);
+/**
+ * DB에서 불러온 지형지물 라인들(강/휴전선/도로 등)을 라벨과 함께 지도에 추가한다.
+ *
+ * @param {{ name: string, color: string, coordinates: [number, number][] }[]} lines
+ *   coordinates는 [위도, 경도] 순서
+ */
+function addLinesLayer(lines) {
+    lines.forEach((line) => {
+        if (!Array.isArray(line.coordinates) || line.coordinates.length < 2) return;
 
-    // 강 이름 라벨
-    const labelFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([35.272, 33.313])),
+        const lineCoords = line.coordinates.map(([lat, lon]) => ol.proj.fromLonLat([lon, lat]));
+        const lineFeature = new ol.Feature({ geometry: new ol.geom.LineString(lineCoords) });
+        lineFeature.setStyle(lineStyle(line.color));
+        vectorSource.addFeature(lineFeature);
+
+        // 라벨: 라인 중간 지점에 배치
+        const midPoint = line.coordinates[Math.floor(line.coordinates.length / 2)];
+        const labelFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([midPoint[1], midPoint[0]])),
+        });
+        labelFeature.setStyle(new ol.style.Style({
+            text: new ol.style.Text({
+                text: line.name,
+                font: 'bold 14px sans-serif',
+                fill: new ol.style.Fill({ color: line.color }),
+                stroke: new ol.style.Stroke({ color: '#fff', width: 3 }),
+            }),
+        }));
+        vectorSource.addFeature(labelFeature);
     });
-    labelFeature.setStyle(new ol.style.Style({
-        text: new ol.style.Text({
-            text: '리타니 강',
-            font: 'bold 14px sans-serif',
-            fill: new ol.style.Fill({ color: '#0056b3' }),
-            stroke: new ol.style.Stroke({ color: '#fff', width: 3 }),
-        }),
-    }));
-    vectorSource.addFeature(labelFeature);
-}
-
-/** 휴전선 및 이름 라벨을 지도에 추가한다. */
-function addLineLayer() {
-    // YELLOW LINE
-    const bufferCoords = YELLOW_LINE_COORDS.map(([lat, lon]) => ol.proj.fromLonLat([lon, lat]));
-    const bufferFeature = new ol.Feature({ geometry: new ol.geom.LineString(bufferCoords) });
-    bufferFeature.setStyle(yellowLineStyle);
-    vectorSource.addFeature(bufferFeature);
-
-    const labelFeature1 = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([35.29172317133812, 33.17681209979992])),
-    });
-    labelFeature1.setStyle(new ol.style.Style({
-        text: new ol.style.Text({
-            text: 'Yellow Line',
-            font: 'bold 14px sans-serif',
-            fill: new ol.style.Fill({ color: 'hsla(44, 100%, 48%, 0.99)' }),
-            stroke: new ol.style.Stroke({ color: '#fff', width: 3 }),
-        }),
-    }));
-    vectorSource.addFeature(labelFeature1);
-
-    // BLUE
-    const blueCoords = BLUE_LINE_COORDS.map(([lat, lon]) => ol.proj.fromLonLat([lon, lat]));
-    const blueFeature = new ol.Feature({ geometry: new ol.geom.LineString(blueCoords) });
-    blueFeature.setStyle(blueLineStyle);
-    vectorSource.addFeature(blueFeature);
-
-    const labelFeature2 = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([35.19231954922473, 33.07802407940353])),
-    });
-    labelFeature2.setStyle(new ol.style.Style({
-        text: new ol.style.Text({
-            text: 'BLUE Line',
-            font: 'bold 14px sans-serif',
-            fill: new ol.style.Fill({ color: 'rgba(0, 0, 255, 0.6)' }),
-            stroke: new ol.style.Stroke({ color: '#fff', width: 3 }),
-        }),
-    }));
-    vectorSource.addFeature(labelFeature2);
-}
-
-/** 51번 국도 라인 및 이름 라벨을 지도에 추가한다. */
-function addRoute51Layer() {
-    if (typeof ROUTE_51_COORDS === 'undefined') return;
-
-    // 국도 경로 라인
-    const routeCoords = ROUTE_51_COORDS.map(([lat, lon]) => ol.proj.fromLonLat([lon, lat]));
-    const routeFeature = new ol.Feature({ geometry: new ol.geom.LineString(routeCoords) });
-    routeFeature.setStyle(route51Style);
-    vectorSource.addFeature(routeFeature);
-
-    // 경로 중간 지점에 국도 이름 라벨 배치
-    const midPoint = ROUTE_51_COORDS[Math.floor(ROUTE_51_COORDS.length / 2)];
-    const routeLabelFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([midPoint[1], midPoint[0]])),
-    });
-    routeLabelFeature.setStyle(new ol.style.Style({
-        text: new ol.style.Text({
-            text: '51번 국도',
-            font: 'bold 12px sans-serif',
-            offsetY: -70, // 라인 위에 표시되도록 위로 오프셋
-            fill: new ol.style.Fill({ color: '#000' }),
-            stroke: new ol.style.Stroke({ color: '#fff', width: 2 }),
-        }),
-    }));
-    vectorSource.addFeature(routeLabelFeature);
 }
 
 // ─────────────────────────────────────────
@@ -147,27 +86,25 @@ function addUnifilLayer() {
 }
 
 // ─────────────────────────────────────────
-// 4. 점령지 마커
+// 4. 점령지 마커 (DB: map_markers)
 // ─────────────────────────────────────────
 
-/** 원형/X형 고정 점령지 마커를 지도에 추가한다. */
-function addOccupiedLocationLayers(filteredData) {
-    // 현재 필터된 데이터의 지명 목록
+/**
+ * DB에서 불러온 원형/X형 점령지 마커를 지도에 추가한다.
+ *
+ * @param {{ name: string, marker_type: 'circle'|'x', lat: number, lon: number }[]} markers
+ * @param {{ name: string }[]} filteredData - 현재 필터된 상황 데이터 (공습 대상이면 라벨 생략)
+ */
+function addOccupiedLocationLayers(markers, filteredData) {
     const activeNames = new Set(
         filteredData.map(d => d.name.split('(')[0].trim())
     );
 
-    if (typeof CIRCLE_LOCS !== 'undefined') {
-        CIRCLE_LOCS.forEach(([lat, lon, name]) => {
-            // 공습 대상이면 라벨 없이, 아니면 기존대로
-            addMarker([lon, lat], circleStyle(activeNames.has(name) ? null : name));
-        });
-    }
-    if (typeof X_LOCS !== 'undefined') {
-        X_LOCS.forEach(([lat, lon, name]) => {
-            addMarker([lon, lat], xStyle(activeNames.has(name) ? null : name));
-        });
-    }
+    markers.forEach((m) => {
+        const label = activeNames.has(m.name) ? null : m.name;
+        const style = m.marker_type === 'x' ? xStyle(label) : circleStyle(label);
+        addMarker([m.lon, m.lat], style);
+    });
 }
 
 // ─────────────────────────────────────────
@@ -185,7 +122,7 @@ function addSituationMarkers(data) {
         let style;
 
         if (item.detail_info?.trim()) {
-            // 기사 제목이 있는 경우: 폭발 e이미지 마커
+            // 기사 제목이 있는 경우: 폭발 이미지 마커
             const iconSrc = (atk.includes('헤즈볼라') || atk.includes('레바논'))
                 ? '/images/red-explosion.png'
                 : '/images/blue-explosion.png';
@@ -233,10 +170,8 @@ function updateMapMarkers(filteredData) {
     if (!vectorSource) return;
     vectorSource.clear();
 
-    addRiverLayer();
-    addLineLayer();
-    addRoute51Layer();
+    addLinesLayer(mapLines);
     addUnifilLayer();
-    addOccupiedLocationLayers(filteredData);
+    addOccupiedLocationLayers(mapMarkers, filteredData);
     addSituationMarkers(filteredData);
 }
