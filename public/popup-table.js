@@ -95,7 +95,7 @@ function timeToNumber(timeStr) {
 // 5. popup table loader
 // ==========================
 async function loadPopupTable() {
-    const res = await fetch('/api/locations/today');
+    const res = await fetch('./api/locations/today');
     const data = await res.json();
 
     const tbody = document.getElementById('popup-table-body');

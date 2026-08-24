@@ -124,8 +124,8 @@ function addSituationMarkers(data) {
         if (item.detail_info?.trim()) {
             // 기사 제목이 있는 경우: 폭발 이미지 마커
             const iconSrc = (atk.includes('헤즈볼라') || atk.includes('레바논'))
-                ? '/images/red-explosion.png'
-                : '/images/blue-explosion.png';
+                ? './images/red-explosion.png'
+                : './images/blue-explosion.png';
 
             style = new ol.style.Style({
                 image: new ol.style.Icon({
