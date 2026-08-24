@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <title>[공정처] 우크라이나 데이터 관리</title>
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+    <header class="admin-header">
+        <h1>📋 데이터 관리</h1>
+        <a href="./" class="link-btn">← 지도로 돌아가기</a>
+    </header>
+
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="locations">상황 데이터</button>
+        <button class="tab-btn" data-tab="lines">지형지물 라인 (강/휴전선/도로)</button>
+        <button class="tab-btn" data-tab="markers">점령지 마커</button>
+    </nav>
+
+    <!-- ═══════════════════════════════════════
+         탭 1: 상황 데이터
+         ═══════════════════════════════════════ -->
+    <section id="tab-locations" class="tab-panel">
+        <div class="toolbar">
+            <input type="text" id="search-input" placeholder="이름 / 공격주체 / 상세내용 검색...">
+            <span id="result-count"></span>
+        </div>
+
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>이름</th>
+                    <th>좌표</th>
+                    <th>공격주체</th>
+                    <th>발생일시</th>
+                    <th>상세내용</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody id="data-tbody"></tbody>
+        </table>
+
+        <div class="pagination">
+            <button id="prev-page">이전</button>
+            <span id="page-info"></span>
+            <button id="next-page">다음</button>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         탭 2: 지형지물 라인
+         ═══════════════════════════════════════ -->
+    <section id="tab-lines" class="tab-panel hidden">
+        <div class="toolbar">
+            <button id="add-line-btn">+ 새 라인 추가</button>
+            <span id="line-count"></span>
+        </div>
+
+        <table id="line-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>이름</th>
+                    <th>색상</th>
+                    <th>좌표 개수</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody id="line-tbody"></tbody>
+        </table>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         탭 3: 점령지 마커
+         ═══════════════════════════════════════ -->
+    <section id="tab-markers" class="tab-panel hidden">
+        <div class="toolbar">
+            <button id="add-marker-btn">+ 새 마커 추가</button>
+            <span id="marker-count"></span>
+        </div>
+
+        <table id="marker-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>이름</th>
+                    <th>종류</th>
+                    <th>좌표</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody id="marker-tbody"></tbody>
+        </table>
+    </section>
+
+    <!-- 수정 모달: 상황 데이터 -->
+    <div id="edit-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>📝 상황 정보 수정</h3>
+            <input type="hidden" id="edit-id">
+
+            <label>이름</label>
+            <input type="text" id="edit-name">
+
+            <label>위도, 경도</label>
+            <input type="text" id="edit-coords">
+
+            <div class="datetime-group">
+                <div>
+                    <label>날짜</label>
+                    <input type="date" id="edit-date">
+                </div>
+                <div>
+                    <label>시간</label>
+                    <input type="time" id="edit-time">
+                </div>
+            </div>
+
+            <label>공격 주체</label>
+            <div class="attacker-group">
+                <input type="radio" name="edit-attacker-radio" id="edit-atk-russia" value="러시아군">
+                <label for="edit-atk-russia">러시아군</label>
+                <input type="radio" name="edit-attacker-radio" id="edit-atk-ukraine" value="우크라이나군">
+                <label for="edit-atk-ukraine">우크라이나군</label>
+            </div>
+
+            <label>상세내용</label>
+            <textarea id="edit-detail"></textarea>
+
+            <div class="modal-buttons">
+                <button id="edit-save-btn">저장</button>
+                <button id="edit-cancel-btn" class="cancel-btn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가/수정 모달: 라인 -->
+    <div id="line-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="line-modal-title">📝 라인 추가</h3>
+            <input type="hidden" id="line-id">
+
+            <label>이름 (예: 드니프로 강)</label>
+            <input type="text" id="line-name">
+
+            <label>색상 (CSS color, 예: rgba(0, 100, 255, 0.6) 또는 #0066ff)</label>
+            <input type="text" id="line-color" placeholder="rgba(0, 100, 255, 0.6)">
+
+            <label>좌표 (한 줄에 "위도, 경도" 하나씩, 2개 이상)</label>
+            <textarea id="line-coords" placeholder="48.4647, 35.0462&#10;48.4700, 35.0500"></textarea>
+
+            <div class="modal-buttons">
+                <button id="line-save-btn">저장</button>
+                <button id="line-cancel-btn" class="cancel-btn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가/수정 모달: 마커 -->
+    <div id="marker-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="marker-modal-title">📝 마커 추가</h3>
+            <input type="hidden" id="marker-id">
+
+            <label>이름</label>
+            <input type="text" id="marker-name">
+
+            <label>종류</label>
+            <div class="attacker-group">
+                <input type="radio" name="marker-type-radio" id="marker-type-circle" value="circle" checked>
+                <label for="marker-type-circle">원형</label>
+                <input type="radio" name="marker-type-radio" id="marker-type-x" value="x">
+                <label for="marker-type-x">X형</label>
+            </div>
+
+            <label>위도, 경도</label>
+            <input type="text" id="marker-coords" placeholder="48.4647, 35.0462">
+
+            <div class="modal-buttons">
+                <button id="marker-save-btn">저장</button>
+                <button id="marker-cancel-btn" class="cancel-btn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./admin.js"></script>
+</body>
+
+</html>
