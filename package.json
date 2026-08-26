@@ -1,7 +1,7 @@
 {
-  "name": "lebanon-map",
+  "name": "conflict-map",
   "version": "1.0.0",
-  "description": "레바논 공습 상황 등록 지도 (myapp에서 분리된 독립 프로젝트)",
+  "description": "우크라이나/레바논 공습 상황 등록 지도 (통합 프로젝트)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

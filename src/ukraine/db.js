@@ -5,7 +5,7 @@ const { Pool, types } = require('pg');
 types.setTypeParser(types.builtins.TIMESTAMP, (val) => val);
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.UKRAINE_DATABASE_URL,
 });
 
 module.exports = pool;
