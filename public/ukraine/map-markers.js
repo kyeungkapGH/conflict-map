@@ -96,7 +96,7 @@ function addSituationMarkers(data) {
 
         if (item.detail_info?.trim()) {
             // 기사 제목이 있는 경우: 폭발 이미지 마커
-            const iconSrc = (atk.includes('우크라이나'))
+            const iconSrc = (atk.includes('러시아'))
                 ? './images/red-explosion.png'
                 : './images/blue-explosion.png';
 
@@ -120,8 +120,8 @@ function addSituationMarkers(data) {
         } else {
             // 기사 제목 없는 경우: 기존 원형 마커
             let color = '#333';
-            if (atk.includes('러시아')) color = '#1a73e8';
-            else if (atk.includes('우크라이나')) color = '#dc3545';
+            if (atk.includes('러시아')) color = '#dc3545';
+            else if (atk.includes('우크라이나')) color = '#1a73e8';
             style = defaultMarkerStyle(item.name, color);
         }
 

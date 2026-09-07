@@ -112,7 +112,12 @@ function resetForm() {
 
     // 라디오 버튼을 기본값(이스라엘군)으로 복원
     const defaultRadio = document.querySelector('input[name="attacker-radio"][value="이스라엘군"]');
-    if (defaultRadio) defaultRadio.checked = true;
+    if (defaultRadio) {
+        defaultRadio.checked = true;
+        // .checked 대입은 change 이벤트를 발생시키지 않아 동기화 리스너가 돌지 않는다.
+        // hidden 필드를 직접 맞추지 않으면 다음 등록이 attacker 없이 저장된다.
+        document.getElementById('attacker-input').value = defaultRadio.value;
+    }
 }
 
 // ─────────────────────────────────────────

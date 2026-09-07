@@ -287,18 +287,18 @@ button {
 
 /* 러시아군 선택 시 */
 .attacker-group input[value="러시아군"]:checked + label {
-    background: #1a73e8;
-    color: white;
-    border-color: #1a73e8;
-    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
-}
-
-/* 우크라이나군 선택 시 */
-.attacker-group input[value="우크라이나군"]:checked + label {
     background: #dc3545;
     color: white;
     border-color: #dc3545;
     box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+/* 우크라이나군 선택 시 */
+.attacker-group input[value="우크라이나군"]:checked + label {
+    background: #1a73e8;
+    color: white;
+    border-color: #1a73e8;
+    box-shadow: 0 2px 4px rgba(26, 115, 232, 0.3);
 }
 
 /* ─────────────────────────────────────────
