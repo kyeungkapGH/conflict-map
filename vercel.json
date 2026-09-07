@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/ukraine/api/:path*", "destination": "/api/index" },
-    { "source": "/lebanon/api/:path*", "destination": "/api/index" }
-  ]
-}

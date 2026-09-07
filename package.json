@@ -2,16 +2,20 @@
   "name": "conflict-map",
   "version": "1.0.0",
   "description": "우크라이나/레바논 공습 상황 등록 지도 (통합 프로젝트)",
-  "main": "server.js",
+  "main": "src/worker.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "build": "node scripts/build.js",
+    "dev": "npm run build && wrangler pages dev",
+    "deploy": "npm run build && wrangler pages deploy"
   },
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^16.4.5",
-    "express": "^5.2.1",
-    "pg": "^8.20.0"
-  }
+    "@neondatabase/serverless": "^1.1.0",
+    "hono": "^4.13.7"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "wrangler": "^4.129.0"
+  },
+  "type": "module"
 }
