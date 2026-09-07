@@ -15,9 +15,15 @@
     <div id="sidebar">
         <div class="controls">
             <div class="form-header">
-                <h3 id="form-title">📍 상황 정보 등록</h3>
-                <button id="target-btn" onclick="showPopup()">📊 우크라이나 지도 만들기</button>
-                <a href="./admin.html" id="admin-link">🗂️ 전체 데이터 관리</a>
+                <!-- 제목을 감싸서 홈 링크로 쓴다. map-crud.js가 h3의 innerText를 갈아끼우므로
+                     링크를 h3 안에 두면 수정 모드 진입 시 사라진다. -->
+                <a class="home-link" href="/" title="Conflict Map 홈으로">
+                    <h3 id="form-title">📍 상황 정보 등록</h3>
+                </a>
+                <div class="header-actions">
+                    <button id="target-btn" onclick="showPopup()" title="우크라이나 지도 만들기" aria-label="우크라이나 지도 만들기">📊</button>
+                    <a href="./admin.html" id="admin-link" title="전체 데이터 관리" aria-label="전체 데이터 관리">🗂️</a>
+                </div>
             </div>
 
             <a id="download-link" style="display:none;"></a>
