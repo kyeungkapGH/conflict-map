@@ -1,10 +1,11 @@
 /**
  * 기존 constants.js에 하드코딩되어 있던 지형지물 데이터를
  * map_lines / map_markers 테이블로 1회성 이전한다.
- * 실행: node scripts/seed-map-features.js
+ * 실행: node --env-file=.env scripts/lebanon/seed-map-features.js
  */
-require('dotenv').config();
-const pool = require('../src/db');
+import { getDb } from '../../src/db.js';
+
+const pool = getDb(process.env.LEBANON_DATABASE_URL);
 
 const LITANI_RIVER_COORDS = [
     [33.338956717190406, 35.24522847172371], [33.33708984795863, 35.25712761988173],

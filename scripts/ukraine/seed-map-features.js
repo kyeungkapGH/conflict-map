@@ -2,10 +2,11 @@
  * 지형지물 라인(map_lines) / 점령지 마커(map_markers)를 등록하는 시딩 스크립트.
  * 아래 LINES / CIRCLE_LOCS / X_LOCS 배열에 실제 좌표를 채운 뒤 실행한다.
  * (좌표를 모르면 관리자 페이지 /admin.html 에서 직접 추가해도 된다.)
- * 실행: node scripts/seed-map-features.js
+ * 실행: node --env-file=.env scripts/ukraine/seed-map-features.js
  */
-require('dotenv').config();
-const pool = require('../src/db');
+import { getDb } from '../../src/db.js';
+
+const pool = getDb(process.env.UKRAINE_DATABASE_URL);
 
 // 라인 예시: { name: '드니프로 강', color: 'rgba(0, 100, 255, 0.6)', coordinates: [[lat, lon], ...] }
 const LINES = [];
@@ -26,7 +27,7 @@ async function seed() {
     }
 
     if (LINES.length === 0 && CIRCLE_LOCS.length === 0 && X_LOCS.length === 0) {
-        console.log('시딩할 데이터가 비어 있습니다. scripts/seed-map-features.js에 좌표를 채우거나 /admin.html에서 직접 추가하세요.');
+        console.log('시딩할 데이터가 비어 있습니다. scripts/ukraine/seed-map-features.js에 좌표를 채우거나 /admin.html에서 직접 추가하세요.');
         process.exit(0);
     }
 
