@@ -80,10 +80,18 @@ function _initMap() {
             new ol.layer.Vector({ source: vectorSource }),
         ],
         view: new ol.View({
-            center: ol.proj.fromLonLat([46.0, 17.5]), // 예멘 + 사우디 남부를 함께 담는 중심
-            zoom: 6,
+            center: ol.proj.fromLonLat([46.41, 19.16]),
+            zoom: 5.7,
         }),
     });
+
+    // 예멘 전역과 동서송유관(아브카이크~얀부)을 한 화면에 담는다.
+    // 담아야 할 폭이 넓어 화면 크기에 따라 필요한 줌이 5.7~6.3으로 갈리므로,
+    // 고정 줌 대신 실제 뷰포트에 맞춰 맞춘다. 위 center/zoom은 fit 이전의 초기값이다.
+    map.getView().fit(
+        ol.proj.transformExtent([38.27, 12.1, 54.55, 25.93], 'EPSG:4326', 'EPSG:3857'),
+        { size: map.getSize(), padding: [24, 24, 24, 24] }
+    );
 }
 
 /**
