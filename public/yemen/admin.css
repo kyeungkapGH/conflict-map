@@ -1,0 +1,240 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Malgun Gothic', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f4f5f7;
+    color: #222;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.link-btn {
+    text-decoration: none;
+    color: #1a73e8;
+    font-weight: bold;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #ddd;
+}
+
+.tab-btn {
+    background: transparent;
+    color: #555;
+    padding: 10px 16px;
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+}
+
+.tab-btn.active {
+    background: #2c3e50;
+    color: white;
+}
+
+.tab-panel.hidden {
+    display: none;
+}
+
+.color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.toolbar button {
+    width: auto;
+    background: #1a73e8;
+    color: white;
+}
+
+#search-input {
+    flex: 1;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+#result-count {
+    color: #666;
+    font-size: 0.9em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 0.9em;
+    vertical-align: top;
+}
+
+th {
+    background: #2c3e50;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+td.col-detail {
+    max-width: 360px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+td.col-actions {
+    white-space: nowrap;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+.edit-btn {
+    background: #1a73e8;
+    color: white;
+    margin-right: 6px;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pagination button {
+    background: #eee;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    width: 480px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #444;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content input[type="time"],
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+.modal-content textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.datetime-group {
+    display: flex;
+    gap: 12px;
+}
+
+.datetime-group > div {
+    flex: 1;
+}
+
+.attacker-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.modal-buttons .cancel-btn {
+    background: #999;
+    color: white;
+}
+
+.modal-buttons button:first-child {
+    background: #1a73e8;
+    color: white;
+}
