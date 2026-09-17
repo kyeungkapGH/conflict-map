@@ -42,7 +42,7 @@ const extractName = (text) => {
     //    여기서 인식하지 못하면 '메카(Mecca)州 메카(Mecca)市'가 통째로 남아
     //    '메카 메카'처럼 앞부분이 붙은 채 렌더된다.
     const keywords = [
-        '구 ', '주 ', '북부', '시 ',
+        '구 ', '주 ', '북부', '시 ', '수도 ',
         '州 ', '市 ', '區 ', '道 ', '省 ', '郡 ',
     ];
 
@@ -54,6 +54,9 @@ const extractName = (text) => {
 
         // 키워드가 존재하고, 문자열 끝이 아닐 때만 유효
         if (idx !== -1 && idx + k.length < text.length) {
+            // '상수도 ', '하수도 '는 행정구역이 아니라 시설이므로 자르지 않는다.
+            if (k === '수도 ' && /[상하]$/.test(text.slice(0, idx))) return;
+
             if (idx > lastIndex) {
                 lastIndex = idx;
                 found = k;
