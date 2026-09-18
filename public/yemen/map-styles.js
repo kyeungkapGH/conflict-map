@@ -66,6 +66,13 @@ const extractName = (text) => {
 
     if (found) {
         result = text.slice(lastIndex + found.length).trim();
+    } else if (/[구주시州市區道省郡]$/.test(text.trim())) {
+        // 행정구역 표기가 문자열 맨 끝에 오는 경우.
+        // 키워드 방식은 '키워드 뒤쪽'을 남기는 구조라 뒤에 남길 것이 없어
+        // 아무것도 자르지 못한다. ('사우디아라비아 남부 나즈란(Najran)州')
+        // 이때는 마지막 공백 구분 토큰만 남겨 지명을 얻는다.
+        const parts = text.trim().split(/\s+/);
+        result = parts[parts.length - 1];
     } else {
         result = text;
     }
