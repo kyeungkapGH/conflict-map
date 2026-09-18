@@ -96,10 +96,26 @@ function _initNameAutocomplete() {
     const coordsInput = document.getElementById('coords-input');
     if (!nameInput || !coordsInput) return;
 
+    // 자동으로 채워 넣은 좌표를 기억해 둔다.
+    let lastAutofill = null;
+
     nameInput.addEventListener('input', (e) => {
         const entry = allData.find((item) => item.name === e.target.value);
+
         if (entry?.dms_string) {
             coordsInput.value = entry.dms_string;
+            lastAutofill = entry.dms_string;
+            return;
+        }
+
+        // 이름이 기존 기록과 맞지 않게 되면, 자동으로 채웠던 좌표는 남겨두면 안 된다.
+        // 'A 마을'을 골라 좌표가 들어온 뒤 이름만 'B 마을'로 고치면
+        // A의 좌표가 그대로 저장되어, 서로 다른 마을이 한 지점에 겹쳐 쌓인다.
+        // 다만 사용자가 직접 입력했거나 수정 모드에서 불러온 좌표는 건드리면 안 되므로,
+        // 자동으로 넣은 값이 그대로 남아 있을 때만 지운다.
+        if (lastAutofill !== null && coordsInput.value === lastAutofill) {
+            coordsInput.value = '';
+            lastAutofill = null;
         }
     });
 }
