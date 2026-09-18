@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[공정처] 예멘 누적 지도</title>
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/8.2.0/ol.min.css">
+    <link rel="stylesheet" href="./history.css?v=1">
+  <!-- Cloudflare Web Analytics --><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "11869026e6d0475693d6c98df332e075"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <aside id="timeline-panel">
+        <div class="tl-header">
+            <a class="tl-back" href="./" title="상황 정보 등록 화면으로" aria-label="상황 정보 등록 화면으로">←</a>
+            <h3>🗺️ 누적 상황 지도</h3>
+        </div>
+
+        <div id="tl-summary">불러오는 중…</div>
+
+        <div id="tl-body">
+            <p class="tl-empty">
+                지금까지 등록된 모든 지점이 지도에 표시됩니다.<br>
+                마커를 클릭하면 그 지점의 기록이 시간순으로 여기에 나옵니다.
+            </p>
+        </div>
+    </aside>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/8.2.0/dist/ol.min.js"></script>
+    <script src="./map-styles.js"></script>
+    <script src="./history.js"></script>
+</body>
+
+</html>
