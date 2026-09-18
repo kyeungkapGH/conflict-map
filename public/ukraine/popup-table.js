@@ -94,8 +94,21 @@ function timeToNumber(timeStr) {
 // ==========================
 // 5. popup table loader
 // ==========================
+
+/** 슬라이더가 가리키는 날짜를 YYYY-MM-DD로 돌려준다. 슬라이더가 없으면 오늘. */
+function getSelectedDate() {
+    const slider = document.getElementById('date-slider');
+    const daysAgo = slider ? parseInt(slider.value, 10) || 0 : 0;
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    // 'sv-SE' 로캘은 YYYY-MM-DD 형식을 반환한다.
+    return d.toLocaleDateString('sv-SE');
+}
+
 async function loadPopupTable() {
-    const res = await fetch('./api/locations/today');
+    // 표는 슬라이더에서 고른 날짜를 따라간다. 등록 시각이 아니라 공습 발생
+    // 일시 기준이라, 며칠 전 공습을 오늘 입력해도 그 날짜 표에 들어간다.
+    const res = await fetch(`./api/locations/today?date=${getSelectedDate()}`);
     const data = await res.json();
 
     const tbody = document.getElementById('popup-table-body');

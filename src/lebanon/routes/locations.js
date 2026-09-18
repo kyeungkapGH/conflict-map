@@ -33,16 +33,20 @@ routes.get('/', async (c) => {
   }
 });
 
-// GET /api/locations/today : 오늘 등록된 데이터만 조회
+// GET /api/locations/today?date=YYYY-MM-DD : 해당 날짜에 '발생한' 데이터 (기본값 오늘)
+// 등록 시각(created_at)이 아니라 발생 일시(occurred_at)로 거른다.
+// 공습 며칠 뒤에 입력하는 일이 흔해, 등록 시각으로 거르면 과거 공습이
+// 입력한 날의 목록에 통째로 딸려 들어온다.
 routes.get('/today', async (c) => {
+  const date = c.req.query('date') || null;
   try {
     const result = await db(c).query(`
       SELECT id, name, dms_string, lat, lon, category, detail_info, damage_info, attacker, distance_km,
-             to_char(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+             to_char(occurred_at, 'YYYY-MM-DD HH24:MI:SS') as occurred_at
       FROM locations
-      WHERE DATE(created_at) = CURRENT_DATE
+      WHERE DATE(occurred_at) = COALESCE($1::date, CURRENT_DATE)
       ORDER BY id DESC
-    `);
+    `, [date]);
     return c.json(result.rows);
   } catch (err) {
     return c.json({ error: err.message }, 500);
