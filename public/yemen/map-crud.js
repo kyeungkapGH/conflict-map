@@ -274,9 +274,9 @@ function updateLocationDropdown(filteredData) {
 
 /**
  * 날짜 슬라이더 값 변경 시 호출된다.
- * 슬라이더 값(0~7)을 기준으로 오늘로부터 N일 전 데이터를 필터링한다.
+ * 슬라이더 값(0~12)을 기준으로 오늘로부터 N일 전 데이터를 필터링한다.
  *
- * @param {string|number} val - 슬라이더 현재 값 (0 = 오늘, 7 = 7일 전)
+ * @param {string|number} val - 슬라이더 현재 값 (0 = 오늘, 12 = 12일 전)
  */
 function handleSliderChange(val) {
     const targetDate = new Date();
