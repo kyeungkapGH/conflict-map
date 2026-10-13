@@ -90,24 +90,47 @@ function addOccupiedLocationLayers(markers, filteredData) {
  * @param {{ name: string, lat: string|number, lon: string|number, attacker: string }[]} data
  */
 function addSituationMarkers(data) {
-    data.forEach((item) => {
-        const atk = item.attacker || '';
-        let style;
+    // 같은 좌표의 기록을 한 지점으로 묶는다. 묶지 않으면 양측이 같은 곳을 쳤을 때
+    // 빨강·파랑 마커가 같은 자리에 겹쳐 그려져, 나중에 그린 쪽만 보인다.
+    const groups = new Map();
+    for (const item of data) {
+        const lat = parseFloat(item.lat);
+        const lon = parseFloat(item.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
 
-        if (item.detail_info?.trim()) {
-            // 기사 제목이 있는 경우: 폭발 이미지 마커
-            const iconSrc = (atk.includes('후티'))
-                ? './images/red-explosion.png'
-                : './images/blue-explosion.png';
+        const key = `${lat.toFixed(6)},${lon.toFixed(6)}`;
+        if (!groups.has(key)) groups.set(key, { lat, lon, items: [] });
+        groups.get(key).items.push(item);
+    }
 
-            style = new ol.style.Style({
+    for (const g of groups.values()) {
+        const withArticle = g.items.filter((it) => it.detail_info?.trim());
+
+        // 기사 제목이 있는 경우: 폭발 이미지 마커.
+        // 한 지점을 양측이 공격했으면 좌우를 반씩 합친 아이콘을 쓴다.
+        if (withArticle.length) {
+            let red = false;
+            let blue = false;
+            for (const it of withArticle) {
+                const atk = it.attacker || '';
+                if (atk.includes('후티')) red = true;
+                else blue = true;
+            }
+
+            const iconSrc = (red && blue)
+                ? './images/half-explosion.png'
+                : red
+                    ? './images/red-explosion.png'
+                    : './images/blue-explosion.png';
+
+            addMarker([g.lon, g.lat], new ol.style.Style({
                 image: new ol.style.Icon({
                     src: iconSrc,
                     scale: 0.75,
                     anchor: [0.5, 0.5],
                 }),
                 text: new ol.style.Text({
-                    text: extractName(item.name),
+                    text: extractName(withArticle[0].name),
                     font: 'bold 15px sans-serif',
                     textAlign: 'left',
                     textBaseline: 'middle',
@@ -116,17 +139,19 @@ function addSituationMarkers(data) {
                     fill: new ol.style.Fill({ color: '#000' }),
                     stroke: new ol.style.Stroke({ color: '#fff', width: 3 }),
                 }),
-            });
-        } else {
-            // 기사 제목 없는 경우: 기존 원형 마커
+            }));
+        }
+
+        // 기사 제목 없는 경우: 기존 원형 마커
+        for (const it of g.items) {
+            if (it.detail_info?.trim()) continue;
+            const atk = it.attacker || '';
             let color = '#333';
             if (atk.includes('사우디')) color = '#1a73e8';
             else if (atk.includes('후티')) color = '#dc3545';
-            style = defaultMarkerStyle(item.name, color);
+            addMarker([g.lon, g.lat], defaultMarkerStyle(it.name, color));
         }
-
-        addMarker([parseFloat(item.lon), parseFloat(item.lat)], style);
-    });
+    }
 }
 
 // ─────────────────────────────────────────
