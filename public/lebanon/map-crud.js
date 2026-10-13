@@ -390,36 +390,74 @@ function copyAndMove(rawName, lat, lon) {
 // ─────────────────────────────────────────
 
 /**
- * 현재 지도 뷰를 PNG 이미지로 캡처하여 다운로드한다.
+ * 화면에 보이는 지도 레이어들을 하나의 캔버스로 합친다.
+ *
+ * @returns {HTMLCanvasElement} 지도 뷰 크기의 캔버스
+ */
+function composeMapCanvas() {
+    const size = map.getSize();
+    const mapCanvas = Object.assign(document.createElement('canvas'), {
+        width: size[0],
+        height: size[1],
+    });
+    const ctx = mapCanvas.getContext('2d');
+
+    document.querySelectorAll('.ol-layer canvas').forEach((canvas) => {
+        if (canvas.width === 0) return;
+
+        const opacity = canvas.parentNode.style.opacity || 1;
+        ctx.globalAlpha = Number(opacity);
+
+        const transform = canvas.style.transform;
+        const matrix = transform
+            ? transform.match(/^matrix\(([^)]*)\)$/)[1].split(',').map(Number)
+            : [1, 0, 0, 1, 0, 0];
+        CanvasRenderingContext2D.prototype.setTransform.apply(ctx, matrix);
+        ctx.drawImage(canvas, 0, 0);
+    });
+
+    return mapCanvas;
+}
+
+/** 캔버스를 PNG 파일로 내려받는다. 클립보드를 쓸 수 없을 때의 대비책. */
+function downloadMapCanvas(mapCanvas) {
+    const link = document.createElement('a');
+    link.href     = mapCanvas.toDataURL('image/png');
+    link.download = `tactical_map_${Date.now()}.png`;
+    link.click();
+}
+
+/**
+ * 현재 지도 뷰를 PNG로 캡처해 클립보드에 넣는다. 한글에 Ctrl+V로 바로 붙는다.
  * rendercomplete 이벤트를 활용해 모든 레이어가 렌더링된 후 캡처한다.
+ * 클립보드를 쓸 수 없는 환경에서는 예전처럼 파일로 내려받는다.
  */
 function captureMap() {
     map.once('rendercomplete', () => {
-        const size = map.getSize();
-        const mapCanvas = Object.assign(document.createElement('canvas'), {
-            width: size[0],
-            height: size[1],
-        });
-        const ctx = mapCanvas.getContext('2d');
+        const mapCanvas = composeMapCanvas();
 
-        document.querySelectorAll('.ol-layer canvas').forEach((canvas) => {
-            if (canvas.width === 0) return;
+        if (!navigator.clipboard || !navigator.clipboard.write || !window.ClipboardItem) {
+            downloadMapCanvas(mapCanvas);
+            alert('클립보드를 쓸 수 없는 브라우저라 파일로 저장했습니다.');
+            return;
+        }
 
-            const opacity = canvas.parentNode.style.opacity || 1;
-            ctx.globalAlpha = Number(opacity);
-
-            const transform = canvas.style.transform;
-            const matrix = transform
-                ? transform.match(/^matrix\(([^)]*)\)$/)[1].split(',').map(Number)
-                : [1, 0, 0, 1, 0, 0];
-            CanvasRenderingContext2D.prototype.setTransform.apply(ctx, matrix);
-            ctx.drawImage(canvas, 0, 0);
+        // toBlob을 기다리는 동안 사용자 클릭 권한이 만료될 수 있다. 그래서 Blob을
+        // 기다리지 않고 Promise를 ClipboardItem에 그대로 넘겨 write를 즉시 부른다.
+        const blobPromise = new Promise((resolve, reject) => {
+            mapCanvas.toBlob(
+                (blob) => (blob ? resolve(blob) : reject(new Error('캔버스를 PNG로 바꾸지 못했습니다'))),
+                'image/png'
+            );
         });
 
-        const link = document.createElement('a');
-        link.href     = mapCanvas.toDataURL('image/png');
-        link.download = `tactical_map_${Date.now()}.png`;
-        link.click();
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blobPromise })])
+            .then(() => alert('지도가 클립보드에 복사되었습니다!\n한글에 Ctrl+V로 붙여넣으세요.'))
+            .catch((err) => {
+                downloadMapCanvas(mapCanvas);
+                alert('클립보드 복사가 막혀서 파일로 저장했습니다.\n('
+                    + (err && err.message ? err.message : err) + ')');
+            });
     });
 
     map.renderSync();
