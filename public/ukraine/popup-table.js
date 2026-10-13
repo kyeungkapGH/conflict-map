@@ -166,29 +166,105 @@ async function loadPopupTable() {
 // ==========================
 // 6. 복사용 버튼
 // ==========================
-function copyTable() {
-    const table = document.getElementById('popup-table');
-    let text = '';
-
-    // 테이블 헤더
-    const headers = Array.from(table.querySelectorAll('thead th'))
-        .map(th => th.innerText.trim())
-        .join('\t');
-    text += headers + '\n';
-
-    // 테이블 바디
-    table.querySelectorAll('tbody tr').forEach(tr => {
-        const row = Array.from(tr.querySelectorAll('td'))
-            .map(td => td.innerText.trim())
-            .join('\t');
-        text += row + '\n';
+/** 셀 안의 글자를 꺼낸다. <br>은 줄바꿈으로, 나머지 태그는 버린다. */
+function cellLines(node) {
+    let out = '';
+    node.childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) out += child.nodeValue;
+        else if (child.nodeName === 'BR') out += '\n';
+        else out += cellLines(child);
     });
+    return out;
+}
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-            .then(() => alert('표가 복사되었습니다!'))
-            .catch(err => alert('복사 실패: ' + err));
-    } else {
-        alert('클립보드 기능이 꺼져있습니다.\n직접 드래그 해 복사해주세요.');
+function escapeHtml(str) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+    return str.replace(/[&<>"]/g, (ch) => map[ch]);
+}
+
+/** 한글·워드가 표로 받아들이는 HTML을 만든다. 클립보드에는 페이지 CSS가 따라가지
+ *  않으므로 테두리·정렬 같은 꼭 필요한 서식은 인라인으로 박아 넣는다. */
+function buildTableHtml(table) {
+    const CELL = 'border:1px solid #000; padding:4px 6px; vertical-align:top;';
+    const cols = Array.from(table.querySelectorAll('colgroup col'))
+        .map((col) => `<col style="width:${col.style.width}">`)
+        .join('');
+
+    const rowHtml = (tr, tag, extra) => {
+        const cells = Array.from(tr.children)
+            .map((cell) => {
+                const span = cell.colSpan > 1 ? ` colspan="${cell.colSpan}"` : '';
+                const body = escapeHtml(cellLines(cell).trim()).replace(/\n/g, '<br>');
+                return `<${tag}${span} style="${CELL}${extra}">${body}</${tag}>`;
+            })
+            .join('');
+        return `<tr>${cells}</tr>`;
+    };
+
+    const head = Array.from(table.querySelectorAll('thead tr'))
+        .map((tr) => rowHtml(tr, 'th', ' background:#f5f7fa; text-align:left;'))
+        .join('');
+    const body = Array.from(table.querySelectorAll('tbody tr'))
+        .map((tr) => rowHtml(tr, 'td', ''))
+        .join('');
+
+    return '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>'
+        + `<table style="border-collapse:collapse; width:100%; font-size:10pt;">`
+        + `${cols ? `<colgroup>${cols}</colgroup>` : ''}`
+        + `<thead>${head}</thead><tbody>${body}</tbody></table>`
+        + '</body></html>';
+}
+
+/** HTML을 못 쓰는 환경을 위한 탭 구분 평문. */
+function buildTableText(table) {
+    return Array.from(table.querySelectorAll('thead tr, tbody tr'))
+        .map((tr) => Array.from(tr.children)
+            .map((cell) => cellLines(cell).trim().replace(/\n/g, ' '))
+            .join('\t'))
+        .join('\n') + '\n';
+}
+
+/** 표를 직접 드래그해 Ctrl+C 한 것과 같은 효과. 구형 브라우저용 대비책. */
+function copyTableBySelection(table) {
+    const selection = window.getSelection();
+    const saved = selection.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
+    const range = document.createRange();
+    range.selectNode(table);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    let ok = false;
+    try {
+        ok = document.execCommand('copy');
+    } catch (err) {
+        ok = false;
+    }
+
+    selection.removeAllRanges();
+    if (saved) selection.addRange(saved);
+    return ok;
+}
+
+async function copyTable() {
+    const table = document.getElementById('popup-table');
+
+    // 한글은 클립보드에 HTML이 함께 올라와 있을 때만 표로 붙여넣는다. text/plain만
+    // 올리면 탭이 섞인 글로 들어가므로, 두 형식을 같이 올린다.
+    try {
+        if (!navigator.clipboard || !window.ClipboardItem) throw new Error('unsupported');
+
+        await navigator.clipboard.write([new ClipboardItem({
+            'text/html': new Blob([buildTableHtml(table)], { type: 'text/html' }),
+            'text/plain': new Blob([buildTableText(table)], { type: 'text/plain' }),
+        })]);
+        alert('표가 복사되었습니다!\n한글에서 붙여넣기 옵션 중 "HTML 형식"을 고르면 표로 들어갑니다.');
+        return;
+    } catch (err) {
+        if (copyTableBySelection(table)) {
+            alert('표가 복사되었습니다!\n한글에서 붙여넣기 옵션 중 "HTML 형식"을 고르면 표로 들어갑니다.');
+            return;
+        }
+        alert('복사 실패: ' + (err && err.message ? err.message : err)
+            + '\n표를 직접 드래그해 복사해주세요.');
     }
 }
