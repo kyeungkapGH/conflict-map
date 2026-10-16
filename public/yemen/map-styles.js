@@ -170,3 +170,25 @@ const defaultMarkerStyle = (label, color) => new ol.style.Style({
     }),
     text: createTextStyle(label),
 });
+
+/**
+ * 폭발 아이콘 옆에 붙는 순서 번호 스타일을 생성한다.
+ * 번호는 복붙용 표의 '순서' 칸과 같은 값이다.
+ *
+ * @param {string} label - 표시할 번호. 같은 지점에 여러 건이면 '2,5' 형태
+ * @param {string} color - 공격 주체 색상 (CSS color)
+ * @param {number} offsetY - 세로 위치. 양측이 같은 곳을 쳤을 때 위아래로 나눈다.
+ * @returns {ol.style.Style}
+ */
+const situationNumberStyle = (label, color, offsetY) => new ol.style.Style({
+    text: new ol.style.Text({
+        text: label,
+        font: 'bold 16px sans-serif',
+        textAlign: 'right',
+        textBaseline: 'middle',
+        offsetX: -24,
+        offsetY,
+        fill: new ol.style.Fill({ color }),
+        stroke: new ol.style.Stroke({ color: '#fff', width: 4 }),
+    }),
+});
